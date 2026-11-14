@@ -88,10 +88,26 @@
         "depends": [
           "libasound2"
         ],
-        "desktopTemplate": "./desktop.template"
+        "desktopTemplate": "./desktop.template",
+        "replaces": [
+          "omni-get",
+          "omniget"
+        ],
+        "conflicts": [
+          "omni-get",
+          "omniget"
+        ]
       },
       "rpm": {
-        "desktopTemplate": "./desktop.template"
+        "desktopTemplate": "./desktop.template",
+        "obsoletes": [
+          "omni-get",
+          "omniget"
+        ],
+        "conflicts": [
+          "omni-get",
+          "omniget"
+        ]
       }
     }
   }

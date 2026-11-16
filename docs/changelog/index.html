@@ -1415,7 +1415,7 @@
           <li>
             <a href="../courses/" class="sidebar-link">
               <span>36 Course Platforms</span>
-              <span class="sidebar-tag">v0.16.7</span>
+              <span class="sidebar-tag">v0.16.8</span>
             </a>
           </li>
         </ul>
@@ -1502,12 +1502,53 @@
         Release notes, feature changes, and system patches for LibreGet. All desktop releases are signed, reproducible, and published with SHA-256 binary validation.
       </p>
 
+      <!-- v0.16.8 Release -->
+      <article class="release-box" id="v0-16-8">
+        <div class="release-header">
+          <div>
+            <div style="display: flex; align-items: center; gap: 8px;">
+              <span class="release-tag-pill">v0.16.8 Latest Stable</span>
+              <span class="release-date">Released November 2026</span>
+            </div>
+            <h2 class="release-title">Multi-Platform Legacy App Migration &amp; Packaging Contracts</h2>
+          </div>
+          <a href="https://github.com/OpenSelena/libreget/releases/tag/v0.16.8" target="_blank" rel="noopener" class="subtab-item" style="border: 1px solid var(--border); text-decoration: none;">
+            <span>GitHub Tag</span>
+            <svg class="icon icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+          </a>
+        </div>
+
+        <div class="release-section">
+          <h3 class="release-section-title">
+            <svg class="icon icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+            What's New
+          </h3>
+          <ul class="release-list">
+            <li><strong>Universal Data Migration Engine</strong>: Zero-loss migration on first boot adopting SQLite database, WAL files, settings, active queues, and browser cookies from <code>com.openselena.omniget</code> to <code>com.openselena.libreget</code>.</li>
+            <li><strong>Automated Legacy Uninstaller (Windows)</strong>: Built-in NSIS installer hook detects running OmniGet instances, safely terminates them, and triggers the silent uninstaller before deploying LibreGet.</li>
+            <li><strong>Finder Trash Delegation (macOS)</strong>: Native AppleScript Finder integration automatically moves legacy <code>/Applications/OmniGet.app</code> to the Trash without requiring root privileges.</li>
+            <li><strong>Native Package Supersession (Linux RPM &amp; DEB)</strong>: Full packaging contracts with RPM <code>Provides</code> &amp; <code>Obsoletes</code> and Debian <code>Provides</code>, <code>Replaces</code> &amp; <code>Conflicts</code> for clean package manager replacement via <code>dnf</code> and <code>apt</code>.</li>
+          </ul>
+        </div>
+
+        <div class="release-section">
+          <h3 class="release-section-title">
+            <svg class="icon icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+            Fixes &amp; Tooling
+          </h3>
+          <ul class="release-list">
+            <li><strong>Desktop Integration Cleanup</strong>: Linux post-migration cleanup unlinks orphaned <code>omniget.desktop</code> launchers and desktop shortcuts.</li>
+            <li><strong>Installer Path Normalization</strong>: Windows NSIS uninstaller invocation uses unquoted <code>_?=</code> target path parameter to prevent child process detachment.</li>
+          </ul>
+        </div>
+      </article>
+
       <!-- v0.16.7 Release -->
       <article class="release-box" id="v0-16-7">
         <div class="release-header">
           <div>
             <div style="display: flex; align-items: center; gap: 8px;">
-              <span class="release-tag-pill">v0.16.7 Latest Stable</span>
+              <span class="sidebar-tag">v0.16.7</span>
               <span class="release-date">Released November 2026</span>
             </div>
             <h2 class="release-title">Libre Ecosystem Rebrand, Automated Formatting Hooks &amp; Custom Subdomain</h2>
@@ -2585,7 +2626,8 @@
         <span>On this page</span>
       </div>
       <ul class="toc-list" id="tocList">
-        <li><a href="#v0-16-7" class="toc-link">v0.16.7 (Latest Stable)</a></li>
+        <li><a href="#v0-16-8" class="toc-link">v0.16.8 (Latest Stable)</a></li>
+        <li><a href="#v0-16-7" class="toc-link">v0.16.7</a></li>
         <li><a href="#v0-16-6" class="toc-link">v0.16.6</a></li>
         <li><a href="#v0-16-5" class="toc-link">v0.16.5</a></li>
         <li><a href="#v0-16-4" class="toc-link">v0.16.4</a></li>

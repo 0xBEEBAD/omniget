@@ -1415,7 +1415,7 @@
           <li>
             <a href="./courses/" class="sidebar-link">
               <span>36 Course Platforms</span>
-              <span class="sidebar-tag">v0.16.7</span>
+              <span class="sidebar-tag">v0.16.8</span>
             </a>
           </li>
         </ul>
@@ -1950,12 +1950,55 @@
         Track every update and bugfix shipped in LibreGet. LibreGet follows Semantic Versioning and publishes signed artifacts with SHA-256 checksums for every desktop release.
       </p>
 
+      <!-- v0.16.8 Release -->
+      <div style="background: var(--bg-card); border: 1px solid var(--border); border-radius: 12px; padding: 24px; margin-bottom: 24px;">
+        <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px; margin-bottom: 16px; border-bottom: 1px solid var(--border); padding-bottom: 14px;">
+          <div>
+            <div style="display: flex; align-items: center; gap: 10px;">
+              <span class="sidebar-tag" style="background: var(--primary); color: var(--text-inverse); font-weight: 600; padding: 3px 8px; border-radius: 6px;">v0.16.8 Latest Release</span>
+              <span style="font-size: 13px; color: var(--text-subtle);">Released November 2026</span>
+            </div>
+            <h3 style="font-size: 18px; font-weight: 700; color: var(--text); margin-top: 6px;">Multi-Platform Legacy App Migration &amp; Packaging Contracts</h3>
+          </div>
+          <a href="https://github.com/OpenSelena/libreget/releases/tag/v0.16.8" target="_blank" rel="noopener" class="subtab-item" style="border: 1px solid var(--border); text-decoration: none;">
+            <span>View Release on GitHub</span>
+            <svg class="icon icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+          </a>
+        </div>
+
+        <div style="display: grid; gap: 18px;">
+          <div>
+            <h4 style="font-size: 15px; font-weight: 600; color: var(--text); margin-bottom: 6px; display: flex; align-items: center; gap: 8px;">
+              <svg class="icon icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+              What's New
+            </h4>
+            <ul style="margin-left: 20px; color: var(--text-muted); font-size: 14px; line-height: 1.6; display: grid; gap: 4px;">
+              <li><strong>Universal Data Migration Engine</strong>: Zero-loss migration on first boot adopting SQLite database, WAL files, settings, active queues, and browser cookies from <code>com.openselena.omniget</code> to <code>com.openselena.libreget</code>.</li>
+              <li><strong>Automated Legacy Uninstaller (Windows)</strong>: Built-in NSIS installer hook detects running OmniGet instances, safely terminates them, and triggers the silent uninstaller before deploying LibreGet.</li>
+              <li><strong>Finder Trash Delegation (macOS)</strong>: Native AppleScript Finder integration automatically moves legacy <code>/Applications/OmniGet.app</code> to the Trash without requiring root privileges.</li>
+              <li><strong>Native Package Supersession (Linux RPM &amp; DEB)</strong>: Full packaging contracts with RPM <code>Provides</code> &amp; <code>Obsoletes</code> and Debian <code>Provides</code>, <code>Replaces</code> &amp; <code>Conflicts</code> for clean package manager replacement via <code>dnf</code> and <code>apt</code>.</li>
+            </ul>
+          </div>
+
+          <div>
+            <h4 style="font-size: 15px; font-weight: 600; color: var(--text); margin-bottom: 6px; display: flex; align-items: center; gap: 8px;">
+              <svg class="icon icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+              Fixes &amp; Tooling
+            </h4>
+            <ul style="margin-left: 20px; color: var(--text-muted); font-size: 14px; line-height: 1.6; display: grid; gap: 4px;">
+              <li><strong>Desktop Integration Cleanup</strong>: Linux post-migration cleanup unlinks orphaned <code>omniget.desktop</code> launchers and desktop shortcuts.</li>
+              <li><strong>Installer Path Normalization</strong>: Windows NSIS uninstaller invocation uses unquoted <code>_?=</code> target path parameter to prevent child process detachment.</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
       <!-- v0.16.7 Release -->
       <div style="background: var(--bg-card); border: 1px solid var(--border); border-radius: 12px; padding: 24px; margin-bottom: 24px;">
         <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px; margin-bottom: 16px; border-bottom: 1px solid var(--border); padding-bottom: 14px;">
           <div>
             <div style="display: flex; align-items: center; gap: 10px;">
-              <span class="sidebar-tag" style="background: var(--primary); color: var(--text-inverse); font-weight: 600; padding: 3px 8px; border-radius: 6px;">v0.16.7 Latest Release</span>
+              <span class="sidebar-tag">v0.16.7</span>
               <span style="font-size: 13px; color: var(--text-subtle);">Released November 2026</span>
             </div>
             <h3 style="font-size: 18px; font-weight: 700; color: var(--text); margin-top: 6px;">Libre Ecosystem Rebrand, Automated Formatting Hooks &amp; Custom Subdomain</h3>

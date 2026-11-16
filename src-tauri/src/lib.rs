@@ -665,6 +665,8 @@ pub fn run() {
             // native-messaging code left under `~/.config/...` so Chrome and
             // Firefox stop trying to start the legacy host process.
             extension_storage::cleanup_legacy_native_messaging();
+            migrate_legacy_omniget_data();
+            cleanup_legacy_omniget_artifacts();
 
             // Cookie Manager: reparticiona `chrome-extension-cookies.txt` legacy em
             // `cookies/<domain>/_default.txt` (CK-1). Quando o registry já tem
@@ -1332,4 +1334,115 @@ pub fn run() {
                 });
             }
         });
+}
+
+fn copy_dir_recursive(src: &std::path::Path, dst: &std::path::Path) -> std::io::Result<()> {
+    std::fs::create_dir_all(dst)?;
+    for entry in std::fs::read_dir(src)? {
+        let entry = entry?;
+        let path = entry.path();
+        let dest_path = dst.join(entry.file_name());
+        if path.is_dir() {
+            copy_dir_recursive(&path, &dest_path)?;
+        } else if !dest_path.exists() {
+            let _ = std::fs::copy(&path, &dest_path);
+        }
+    }
+    Ok(())
+}
+
+fn migrate_legacy_omniget_data() {
+    let Some(data_dir) = dirs::data_dir() else {
+        return;
+    };
+    let legacy_dir = data_dir.join("com.openselena.omniget");
+    let target_dir = data_dir.join("com.openselena.libreget");
+
+    if !legacy_dir.exists() || !legacy_dir.is_dir() {
+        return;
+    }
+
+    let _ = std::fs::create_dir_all(&target_dir);
+
+    // If libreget.db does not exist or is empty (<= 4096 bytes), adopt omniget.db
+    let target_db = target_dir.join("libreget.db");
+    let legacy_db = legacy_dir.join("omniget.db");
+    let should_migrate_db = !target_db.exists()
+        || std::fs::metadata(&target_db)
+            .map(|m| m.len() <= 4096)
+            .unwrap_or(false);
+
+    if should_migrate_db && legacy_db.exists() {
+        tracing::info!("Migrating legacy omniget database to libreget.db");
+        let _ = std::fs::copy(&legacy_db, &target_db);
+        let legacy_wal = legacy_dir.join("omniget.db-wal");
+        let target_wal = target_dir.join("libreget.db-wal");
+        if legacy_wal.exists() {
+            let _ = std::fs::copy(&legacy_wal, &target_wal);
+        }
+        let legacy_shm = legacy_dir.join("omniget.db-shm");
+        let target_shm = target_dir.join("libreget.db-shm");
+        if legacy_shm.exists() {
+            let _ = std::fs::copy(&legacy_shm, &target_shm);
+        }
+    }
+
+    // Migrate settings, state files, and sessions
+    let files = [
+        "settings.json",
+        "media-snapshots.json",
+        "queue.wal",
+        "telegram_plugin_state.json",
+        "telegram.session",
+        "study.db",
+    ];
+    for f in files {
+        let src = legacy_dir.join(f);
+        let dst = target_dir.join(f);
+        if src.exists() && !dst.exists() {
+            let _ = std::fs::copy(&src, &dst);
+        }
+    }
+
+    // Migrate cookies
+    let src_cookies = legacy_dir.join("cookies");
+    let dst_cookies = target_dir.join("cookies");
+    if src_cookies.exists() && !dst_cookies.exists() {
+        let _ = copy_dir_recursive(&src_cookies, &dst_cookies);
+    }
+}
+
+fn cleanup_legacy_omniget_artifacts() {
+    #[cfg(target_os = "linux")]
+    {
+        if let Some(data_dir) = dirs::data_dir() {
+            let target = data_dir.join("applications/omniget-handler.desktop");
+            if target.exists() {
+                let _ = std::fs::remove_file(&target);
+            }
+        }
+    }
+
+    #[cfg(target_os = "macos")]
+    {
+        let candidates = [
+            "/Applications/OmniGet.app",
+            &format!(
+                "{}/Applications/OmniGet.app",
+                std::env::var("HOME").unwrap_or_default()
+            ),
+        ];
+        for path in &candidates {
+            if std::path::Path::new(path).exists() {
+                let script = format!(
+                    r#"tell application "Finder" to delete (POSIX file "{}")"#,
+                    path
+                );
+                let _ = std::process::Command::new("osascript")
+                    .arg("-e")
+                    .arg(&script)
+                    .output();
+            }
+        }
+    }
 }

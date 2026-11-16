@@ -80,6 +80,11 @@
       "entitlements": "Entitlements.plist",
       "minimumSystemVersion": "10.15"
     },
+    "windows": {
+      "nsis": {
+        "installerHooks": "./nsis/installer-hooks.nsh"
+      }
+    },
     "linux": {
       "appimage": {
         "bundleMediaFramework": true
@@ -89,6 +94,10 @@
           "libasound2"
         ],
         "desktopTemplate": "./desktop.template",
+        "provides": [
+          "omni-get",
+          "omniget"
+        ],
         "replaces": [
           "omni-get",
           "omniget"
@@ -100,6 +109,10 @@
       },
       "rpm": {
         "desktopTemplate": "./desktop.template",
+        "provides": [
+          "omni-get",
+          "omniget"
+        ],
         "obsoletes": [
           "omni-get",
           "omniget"

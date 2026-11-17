@@ -665,6 +665,7 @@ pub fn run() {
             // native-messaging code left under `~/.config/...` so Chrome and
             // Firefox stop trying to start the legacy host process.
             extension_storage::cleanup_legacy_native_messaging();
+            terminate_legacy_omniget_process();
             migrate_legacy_omniget_data();
             cleanup_legacy_omniget_artifacts();
 
@@ -1412,6 +1413,23 @@ fn migrate_legacy_omniget_data() {
     }
 }
 
+fn terminate_legacy_omniget_process() {
+    #[cfg(target_os = "macos")]
+    {
+        let _ = std::process::Command::new("pkill")
+            .arg("-x")
+            .arg("OmniGet")
+            .output();
+        std::thread::sleep(std::time::Duration::from_millis(150));
+    }
+    #[cfg(target_os = "windows")]
+    {
+        let _ = std::process::Command::new("taskkill")
+            .args(["/F", "/IM", "OmniGet.exe", "/T"])
+            .output();
+    }
+}
+
 fn cleanup_legacy_omniget_artifacts() {
     #[cfg(target_os = "linux")]
     {
@@ -1425,23 +1443,29 @@ fn cleanup_legacy_omniget_artifacts() {
 
     #[cfg(target_os = "macos")]
     {
-        let candidates = [
-            "/Applications/OmniGet.app",
-            &format!(
-                "{}/Applications/OmniGet.app",
-                std::env::var("HOME").unwrap_or_default()
-            ),
-        ];
-        for path in &candidates {
-            if std::path::Path::new(path).exists() {
-                let script = format!(
-                    r#"tell application "Finder" to delete (POSIX file "{}")"#,
-                    path
-                );
-                let _ = std::process::Command::new("osascript")
-                    .arg("-e")
-                    .arg(&script)
-                    .output();
+        let _ = std::process::Command::new("pkill")
+            .arg("-x")
+            .arg("OmniGet")
+            .output();
+
+        let mut candidates = vec![std::path::PathBuf::from("/Applications/OmniGet.app")];
+        if let Some(home) = dirs::home_dir() {
+            candidates.push(home.join("Applications/OmniGet.app"));
+        }
+
+        for app_path in candidates {
+            if app_path.exists() {
+                if let Err(err) = std::fs::remove_dir_all(&app_path) {
+                    tracing::warn!(
+                        "Direct removal of {} failed: {}, attempting chflags unlock",
+                        app_path.display(),
+                        err
+                    );
+                    let _ = std::process::Command::new("chflags")
+                        .args(["-R", "nouchg", &app_path.to_string_lossy()])
+                        .output();
+                    let _ = std::fs::remove_dir_all(&app_path);
+                }
             }
         }
     }

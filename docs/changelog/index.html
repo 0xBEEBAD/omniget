@@ -1415,7 +1415,7 @@
           <li>
             <a href="../courses/" class="sidebar-link">
               <span>36 Course Platforms</span>
-              <span class="sidebar-tag">v0.16.9</span>
+              <span class="sidebar-tag">v0.16.10</span>
             </a>
           </li>
         </ul>
@@ -1502,12 +1502,52 @@
         Release notes, feature changes, and system patches for LibreGet. All desktop releases are signed, reproducible, and published with SHA-256 binary validation.
       </p>
 
+      <!-- v0.16.10 Release -->
+      <article class="release-box" id="v0-16-10">
+        <div class="release-header">
+          <div>
+            <div style="display: flex; align-items: center; gap: 8px;">
+              <span class="release-tag-pill">v0.16.10 Latest Stable</span>
+              <span class="release-date">Released November 2026</span>
+            </div>
+            <h2 class="release-title">macOS POSIX Uninstallation &amp; Cross-Platform Process Lifecycle Sweep</h2>
+          </div>
+          <a href="https://github.com/OpenSelena/libreget/releases/tag/v0.16.10" target="_blank" rel="noopener" class="subtab-item" style="border: 1px solid var(--border); text-decoration: none;">
+            <span>GitHub Tag</span>
+            <svg class="icon icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+          </a>
+        </div>
+
+        <div class="release-section">
+          <h3 class="release-section-title">
+            <svg class="icon icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+            What's New
+          </h3>
+          <ul class="release-list">
+            <li><strong>POSIX Recursive macOS Uninstaller</strong>: Replaced legacy AppleScript Finder deletion with direct POSIX <code>remove_dir_all</code> and immutable flag unlocking (<code>chflags -R nouchg</code>), bypassing macOS TCC Automation prompts and resolving silent error <code>-1743</code>.</li>
+            <li><strong>Cross-Platform Process Lifecycle Sweep</strong>: Added synchronous termination (<code>pkill -x OmniGet</code> on macOS, <code>taskkill /F /IM OmniGet.exe</code> on Windows) prior to data migration and bundle removal, unlocking SQLite WAL databases and freeing GUI resources.</li>
+            <li><strong>User Applications Directory Detection</strong>: Added automatic detection and removal for user-installed bundles in <code>~/Applications/OmniGet.app</code> alongside root-level <code>/Applications/OmniGet.app</code>.</li>
+          </ul>
+        </div>
+
+        <div class="release-section">
+          <h3 class="release-section-title">
+            <svg class="icon icon-sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+            Fixes &amp; Tooling
+          </h3>
+          <ul class="release-list">
+            <li><strong>Path Normalization with dirs Crate</strong>: Replaced raw environment variable string concatenations with robust <code>dirs::home_dir()</code> path resolution.</li>
+            <li><strong>Atomic WAL Data Migration</strong>: Ensuring old processes exit before database copy operations prevents corrupt or partial WAL journal replication.</li>
+          </ul>
+        </div>
+      </article>
+
       <!-- v0.16.9 Release -->
       <article class="release-box" id="v0-16-9">
         <div class="release-header">
           <div>
             <div style="display: flex; align-items: center; gap: 8px;">
-              <span class="release-tag-pill">v0.16.9 Latest Stable</span>
+              <span class="sidebar-tag">v0.16.9</span>
               <span class="release-date">Released November 2026</span>
             </div>
             <h2 class="release-title">Windows Legacy Uninstaller Path Correction &amp; Secondary Safety Sweep</h2>
@@ -2666,7 +2706,8 @@
         <span>On this page</span>
       </div>
       <ul class="toc-list" id="tocList">
-        <li><a href="#v0-16-9" class="toc-link">v0.16.9 (Latest Stable)</a></li>
+        <li><a href="#v0-16-10" class="toc-link">v0.16.10 (Latest Stable)</a></li>
+        <li><a href="#v0-16-9" class="toc-link">v0.16.9</a></li>
         <li><a href="#v0-16-8" class="toc-link">v0.16.8</a></li>
         <li><a href="#v0-16-7" class="toc-link">v0.16.7</a></li>
         <li><a href="#v0-16-6" class="toc-link">v0.16.6</a></li>

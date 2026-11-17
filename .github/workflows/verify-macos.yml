@@ -10,7 +10,7 @@ jobs:
   verify-macos:
     runs-on: macos-latest
     permissions:
-      contents: read
+      contents: write
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -48,6 +48,7 @@ jobs:
 
       - name: Download LibreGet v0.16.10 binary
         env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           set -e

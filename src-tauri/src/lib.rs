@@ -1445,4 +1445,37 @@ fn cleanup_legacy_omniget_artifacts() {
             }
         }
     }
+
+    #[cfg(target_os = "windows")]
+    {
+        if let Some(desktop) = dirs::desktop_dir() {
+            let lnk = desktop.join("OmniGet.lnk");
+            if lnk.exists() {
+                let _ = std::fs::remove_file(&lnk);
+            }
+        }
+
+        if let Some(roaming) = dirs::data_dir() {
+            let start_menu = roaming.join(r"Microsoft\Windows\Start Menu\Programs");
+            let lnk = start_menu.join("OmniGet.lnk");
+            if lnk.exists() {
+                let _ = std::fs::remove_file(&lnk);
+            }
+            let dir = start_menu.join("OmniGet");
+            if dir.exists() {
+                let _ = std::fs::remove_dir_all(&dir);
+            }
+        }
+
+        if let Some(local_appdata) = dirs::data_local_dir() {
+            let legacy_install = local_appdata.join("OmniGet");
+            if legacy_install.exists() {
+                let uninst = legacy_install.join("uninstall.exe");
+                if uninst.exists() {
+                    let _ = std::process::Command::new(&uninst).arg("/S").output();
+                }
+                let _ = std::fs::remove_dir_all(&legacy_install);
+            }
+        }
+    }
 }

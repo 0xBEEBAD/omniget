@@ -181,7 +181,7 @@ Create an empty file named `portable.txt` (or `.portable`) next to the Windows `
 The Downloads page shows speed, phase and ETA read straight from the downloader, so a stalled download looks stalled instead of frozen at "3 seconds left". Interrupted downloads resume where they stopped. Rate-limited sites get retried with backoff, and connections per site adapt on their own, so YouTube gets up to 16 parallel fragments while a site that answers 429 gets fewer. When a Python 3.10 or newer is present, yt-dlp runs as a zipapp on it and starts in under a second instead of unpacking the bundled binary on every launch.
 
 <p align="center">
-  <img src="assets/readme/downloads.png" alt="LibreGet Downloads page with an active 4K YouTube download showing phase, speed, ETA and the exact yt-dlp command, plus queued and finished items" width="900" />
+  <img src="assets/readme/downloads.png" alt="LibreGet Downloads page showing completed downloads across YouTube, Instagram, and Bilibili with resolution, file size, and status" width="900" />
 </p>
 
 ### Skip the window entirely
@@ -207,7 +207,7 @@ LibreGet has native extractors for the platforms people use most, and hands ever
 Options you set once and forget: default quality, audio-only format (MP3, M4A, Opus, FLAC or WAV), subtitle languages and format (SRT, VTT, ASS, embedded or sidecar), thumbnail and metadata embedding, filename template, organize by platform, skip existing files, split by chapters, speed limit, concurrent downloads, proxy. Rules send a given channel or host to a folder and quality of your choice without asking again. Followed channels are checked in the background and can download new uploads automatically with a tray notification.
 
 <p align="center">
-  <img src="assets/readme/settings.png" alt="LibreGet settings: grouped sidebar with Appearance, Downloads, Network, Cookies, Channels, AI, Plugins and Advanced, and a download section with Output, Quality, Subtitles, Clipboard and hotkeys, Per-platform options" width="900" />
+  <img src="assets/readme/settings.png" alt="LibreGet settings: grouped sidebar with Appearance, Typography, Downloads, Network, Cookies, Channels, AI, Plugins and Advanced, and a download section with Output, Quality, Subtitles, Clipboard and hotkeys, Per-platform options" width="900" />
 </p>
 
 ---
@@ -259,7 +259,7 @@ Tools is the part of LibreGet that grew beyond downloading. Each tile is one job
 </p>
 
 <p align="center">
-  <img src="assets/readme/tools.png" alt="LibreGet Tools hub with 25 categories: YouTube, Speech and subtitles, Video editing, Audio, Instagram, X, Facebook, Reddit, Pinterest, Twitch, Bilibili, Spotify, Music, LinkedIn, Games, PDF, Documents, Images, System, Files, Downloads, Automation, Phone, AI and CTF and analysis" width="900" />
+  <img src="assets/readme/tools.png" alt="LibreGet Tools hub with 24 categories: YouTube, Speech and subtitles, Video editing, Audio, Instagram, X, Reddit, Pinterest, Twitch, Bilibili, Spotify, Music, LinkedIn, Games, PDF, Documents, Images, System, Files, Downloads, Automation, Phone, AI and CTF and analysis" width="900" />
 </p>
 
 Status legend: no mark means ready, **beta** means it works but has not been tested against every account type, **planned** means the tile exists so you can see where things are going and does nothing yet.

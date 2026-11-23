@@ -75,6 +75,7 @@ twitch-downloader, subtitle-downloader, epub-reader, spaced-repetition
 - [Frequently asked questions](#frequently-asked-questions)
 - [Command line](#command-line)
 - [Build from source](#build-from-source)
+- [Code signing policy](#code-signing-policy)
 - [Credits](#credits)
 - [Contributing and translations](#contributing-and-translations)
 
@@ -692,6 +693,14 @@ The `courses`, `telegram` and `convert` plugins live inside `src-tauri/plugins/`
 
 ---
 
+## Code signing policy
+
+Free code signing on Windows provided by [SignPath.io](https://about.signpath.io), certificate by [SignPath Foundation](https://signpath.org).
+
+Code changes and signed releases are reviewed and approved by the OpenSelena maintainers. See [Privacy and what LibreGet refuses to do](#privacy-and-what-libreget-refuses-to-do) for how LibreGet handles data.
+
+---
+
 ## Credits
 
 LibreGet is built on:
@@ -700,8 +709,6 @@ LibreGet is built on:
 - [whisper.cpp](https://github.com/ggerganov/whisper.cpp) for speech transcription
 - [Tauri 2](https://tauri.app/), [Rust](https://www.rust-lang.org/), and [SvelteKit](https://kit.svelte.dev/) with Svelte 5
 - [cat-catch](https://github.com/xifangczy/cat-catch), [SponsorBlock](https://sponsor.ajay.app/), [Return YouTube Dislike](https://returnyoutubedislike.com/), [FxTwitter](https://github.com/FixTweet/FixTwitter), and [Spicetify](https://spicetify.app/)
-
-Free code signing on Windows is provided by [SignPath.io](https://about.signpath.io), certificate by [SignPath Foundation](https://signpath.org). Code changes and signed releases are reviewed and approved by the OpenSelena maintainers.
 
 LibreGet is a fork of [OmniGet](https://github.com/tonhowtf/omniget) by [Antonio Leandro](https://github.com/tonhowtf). It is maintained independently and is not affiliated with OmniGet or Antonio Leandro.
 

@@ -40,23 +40,18 @@ twitch-downloader, subtitle-downloader, epub-reader, spaced-repetition
   <a href="https://github.com/OpenSelena/libreget/releases/latest"><img src="https://img.shields.io/github/v/release/OpenSelena/libreget?style=for-the-badge&label=release&color=F28500" alt="Latest release" /></a>
   <a href="https://github.com/OpenSelena/libreget/releases"><img src="https://img.shields.io/github/downloads/OpenSelena/libreget/total?style=for-the-badge&label=downloads&color=1E6FE8" alt="Total downloads" /></a>
   <a href="https://github.com/OpenSelena/libreget/stargazers"><img src="https://img.shields.io/github/stars/OpenSelena/libreget?style=for-the-badge&color=FFD426" alt="GitHub stars" /></a>
+</p>
+
+<p align="center">
   <a href="LICENSE"><img src="https://img.shields.io/badge/license-GPL--3.0-2AA845?style=for-the-badge" alt="License GPL-3.0" /></a>
   <a href="https://t.me/OpenSelena"><img src="https://img.shields.io/badge/Telegram-channel-2CA5E0?style=for-the-badge&logo=telegram&logoColor=white" alt="Telegram channel" /></a>
-  <a href="https://hosted.weblate.org/engage/libreget/"><img src="https://hosted.weblate.org/widget/libreget/frontend/svg-badge.svg" alt="Translation status" /></a>
+  <a href="https://hosted.weblate.org/engage/libreget/"><img src="https://img.shields.io/weblate/progress/libreget?server=https%3A%2F%2Fhosted.weblate.org&style=for-the-badge&logo=weblate&logoColor=white" alt="Translation status" /></a>
 </p>
 
 <p align="center">
   <a href="#download-and-install"><img src="https://img.shields.io/badge/Download_for_Windows,_macOS_or_Linux-→-F28500?style=for-the-badge" alt="Download LibreGet" height="40" /></a>
   &nbsp;
   <a href="#the-tools-section-158-tools-in-25-categories"><img src="https://img.shields.io/badge/See_the_158_tools-→-3D5BF0?style=for-the-badge" alt="See the Tools section" height="40" /></a>
-</p>
-
-<p align="center">
-  <sub>Free. Open source under GPL-3.0. No account, no ads, no telemetry on what you download. Your files stay on your computer.</sub>
-</p>
-
-<p align="center">
-  <sub>Maintained by <a href="https://github.com/igect">igect</a> under GPL-3.0</sub>
 </p>
 
 <p align="center">
@@ -81,6 +76,7 @@ twitch-downloader, subtitle-downloader, epub-reader, spaced-repetition
 - [Frequently asked questions](#frequently-asked-questions)
 - [Command line](#command-line)
 - [Build from source](#build-from-source)
+- [Credits](#credits)
 - [Contributing and translations](#contributing-and-translations)
 
 ---
@@ -703,7 +699,18 @@ Releases sign their updater artifacts with a private key only the maintainer hol
 
 The `courses`, `telegram` and `convert` plugins live inside `src-tauri/plugins/` and compile into the main binary. The plugin registry is [libreget-plugins](https://github.com/OpenSelena/libreget-plugins).
 
-Stack: Tauri 2, Rust, SvelteKit with Svelte 5, SQLite, yt-dlp, FFmpeg, librqbit for torrents, whisper.cpp, aria2, gallery-dl.
+---
+
+## Credits
+
+LibreGet is built on:
+- [yt-dlp](https://github.com/yt-dlp/yt-dlp), [FFmpeg](https://ffmpeg.org/), [gallery-dl](https://github.com/mikf/gallery-dl), and [aria2](https://aria2.github.io/)
+- [librqbit](https://github.com/ikatson/rqbit) for torrents
+- [whisper.cpp](https://github.com/ggerganov/whisper.cpp) for speech transcription
+- [Tauri 2](https://tauri.app/), [Rust](https://www.rust-lang.org/), and [SvelteKit](https://kit.svelte.dev/) with Svelte 5
+- [cat-catch](https://github.com/xifangczy/cat-catch), [SponsorBlock](https://sponsor.ajay.app/), [Return YouTube Dislike](https://returnyoutubedislike.com/), [FxTwitter](https://github.com/FixTweet/FixTwitter), and [Spicetify](https://spicetify.app/)
+
+LibreGet is a fork of [OmniGet](https://github.com/tonhowtf/omniget) by [Antonio Leandro](https://github.com/tonhowtf). It is maintained independently and is not affiliated with OmniGet or Antonio Leandro.
 
 ---
 
@@ -712,8 +719,6 @@ Stack: Tauri 2, Rust, SvelteKit with Svelte 5, SQLite, yt-dlp, FFmpeg, librqbit 
 Bug reports and pull requests go to [Issues](https://github.com/OpenSelena/libreget/issues) and [Pull requests](https://github.com/OpenSelena/libreget/pulls). Questions and quick help live on [Telegram](https://t.me/OpenSelena). Security inquiries and vulnerability reports: [SECURITY.md](SECURITY.md) or [igect@vk.com](mailto:igect@vk.com).
 
 Translations are managed on [Weblate](https://hosted.weblate.org/engage/libreget/). Pick your language and translate in the browser. New strings appear there a few hours after they land in `main`.
-
-LibreGet is built on [yt-dlp](https://github.com/yt-dlp/yt-dlp), [FFmpeg](https://ffmpeg.org/), [gallery-dl](https://github.com/mikf/gallery-dl), [whisper.cpp](https://github.com/ggerganov/whisper.cpp), [aria2](https://aria2.github.io/), [SponsorBlock](https://sponsor.ajay.app/), [Return YouTube Dislike](https://returnyoutubedislike.com/), [FxTwitter](https://github.com/FixTweet/FxTwitter), [Spicetify](https://spicetify.app/), [cat-catch](https://github.com/xifangczy/cat-catch) (parts of the extension's media sniffer) and [Tauri](https://tauri.app/). Thank you to everyone who maintains them.
 
 The penguin mascot is LibreGet's project mascot. Community fan art is welcome. Project brand assets may not be used commercially or bundled into misleading third-party forks without permission.
 

@@ -1189,6 +1189,10 @@ pub async fn cancel_generic_download(
         emit_queue_state_from_state(&app, s);
         queue::try_start_next(app, state.download_queue.clone()).await;
         Ok("Download cancelled".to_string())
+    } else if crate::commands::nami::dispatcher::cancel_running_download(&download_id.to_string())
+        .is_ok()
+    {
+        Ok("Download cancelled".to_string())
     } else {
         Err("No active download for this ID".to_string())
     }
@@ -1320,14 +1324,69 @@ fn delete_downloaded_path(path: &str) {
 }
 
 #[tauri::command]
+pub async fn failed_download_leftovers(
+    state: tauri::State<'_, AppState>,
+    download_id: u64,
+) -> Result<Vec<libreget_core::core::leftovers::LeftoverFile>, String> {
+    let q = state.download_queue.lock().await;
+    let Some(item) = q
+        .items
+        .iter()
+        .find(|i| i.id == download_id && matches!(i.status, queue::QueueStatus::Error { .. }))
+    else {
+        return Ok(Vec::new());
+    };
+    let finished = item.file_path.as_deref().map(std::path::Path::new);
+    let mut files = libreget_core::core::leftovers::task_leftovers(download_id, finished);
+    if files.is_empty() {
+        if let Some(fp) = item.file_path.as_deref() {
+            files = libreget_core::core::leftovers::find_leftovers(
+                &[std::path::PathBuf::from(fp)],
+                finished,
+            )
+            .into_iter()
+            .map(|p| libreget_core::core::leftovers::LeftoverFile {
+                size_bytes: std::fs::metadata(&p).map(|m| m.len()).unwrap_or(0),
+                name: p
+                    .file_name()
+                    .map(|n| n.to_string_lossy().into_owned())
+                    .unwrap_or_else(|| p.to_string_lossy().into_owned()),
+                path: p.to_string_lossy().into_owned(),
+            })
+            .collect();
+        }
+    }
+    Ok(files)
+}
+
+#[tauri::command]
 pub async fn remove_download(
     app: tauri::AppHandle,
     state: tauri::State<'_, AppState>,
     download_id: u64,
     delete_file: Option<bool>,
+    delete_partials: Option<bool>,
 ) -> Result<String, String> {
     let (state_to_emit, seeding_torrent_id, file_path) = {
         let mut q = state.download_queue.lock().await;
+        if delete_partials.unwrap_or(false) {
+            if let Some(item) = q.items.iter().find(|i| {
+                i.id == download_id && matches!(i.status, queue::QueueStatus::Error { .. })
+            }) {
+                let finished = item.file_path.as_deref().map(std::path::Path::new);
+                libreget_core::core::leftovers::delete_task_leftovers(download_id, finished);
+                if let Some(fp) = item.file_path.as_deref() {
+                    let orphans = libreget_core::core::leftovers::find_leftovers(
+                        &[std::path::PathBuf::from(fp)],
+                        finished,
+                    );
+                    for o in orphans {
+                        let _ = std::fs::remove_file(o);
+                    }
+                }
+            }
+        }
+        libreget_core::core::leftovers::forget_task_destinations(download_id);
         let path = if delete_file.unwrap_or(false) {
             q.items
                 .iter()
@@ -1698,6 +1757,9 @@ pub async fn reveal_file(path: String) -> Result<(), String> {
 #[cfg(not(target_os = "android"))]
 #[tauri::command]
 pub async fn open_path_default(path: String) -> Result<(), String> {
+    if !std::path::Path::new(&path).exists() {
+        return Err(format!("File or directory does not exist: {}", path));
+    }
     open::that_detached(&path).map_err(|e| e.to_string())
 }
 

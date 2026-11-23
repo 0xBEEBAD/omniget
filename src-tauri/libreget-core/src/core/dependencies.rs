@@ -7,7 +7,7 @@ pub fn is_flatpak() -> bool {
     std::path::Path::new("/.flatpak-info").exists() || std::env::var("FLATPAK_ID").is_ok()
 }
 
-pub(crate) fn managed_bin_dir() -> Option<PathBuf> {
+pub fn managed_bin_dir() -> Option<PathBuf> {
     Some(crate::core::paths::app_data_dir()?.join("bin"))
 }
 
@@ -774,9 +774,14 @@ async fn download_deno() -> anyhow::Result<PathBuf> {
 
     tracing::info!("Downloading Deno JS runtime from {}", url);
 
+    let asset_name = url.rsplit('/').next().unwrap_or("deno.zip");
+    let sums_url = format!("{url}.sha256sum");
+
     let client = crate::core::http_client::apply_global_proxy(reqwest::Client::builder())
         .timeout(std::time::Duration::from_secs(300))
         .build()?;
+
+    let expected_sha256 = integrity::expected_from_sums_url(&client, &sums_url, asset_name).await?;
 
     let response = client.get(url).send().await?;
     if !response.status().is_success() {
@@ -787,6 +792,7 @@ async fn download_deno() -> anyhow::Result<PathBuf> {
     }
 
     let bytes = response.bytes().await?;
+    integrity::verify_sha256(&bytes, &expected_sha256, "deno")?;
     let data = bytes.to_vec();
     let bin_dir_clone = bin_dir.clone();
     let deno_name_clone = deno_name.clone();
@@ -855,14 +861,23 @@ pub async fn ensure_gallerydl() -> Option<PathBuf> {
     None
 }
 
-async fn download_gallerydl() -> anyhow::Result<PathBuf> {
+pub async fn update_gallerydl() -> anyhow::Result<PathBuf> {
+    if is_flatpak() {
+        if let Some((_, "flatpak")) = find_tool_with_source("gallery-dl").await {
+            return Err(anyhow!(
+                "gallery-dl is provided by the Flatpak runtime and cannot be updated from inside the app"
+            ));
+        }
+    }
+    download_gallerydl().await
+}
+
+pub async fn download_gallerydl() -> anyhow::Result<PathBuf> {
     let bin_dir = managed_bin_dir().ok_or_else(|| anyhow!("Could not determine data directory"))?;
     std::fs::create_dir_all(&bin_dir)?;
 
     let target = bin_dir.join(bin_name("gallery-dl"));
 
-    // Os executaveis standalone vivem no repo gdl-org/builds (Windows, Linux
-    // e macOS); o release do mikf/gallery-dl nao publica mais assets.
     #[cfg(target_os = "windows")]
     let url = "https://github.com/gdl-org/builds/releases/latest/download/gallery-dl_windows.exe";
     #[cfg(target_os = "linux")]
@@ -885,26 +900,72 @@ async fn download_gallerydl() -> anyhow::Result<PathBuf> {
     }
 
     let bytes = response.bytes().await?;
+    if bytes.len() < 1_000_000 {
+        return Err(anyhow!(
+            "Downloaded gallery-dl file is too small ({}B) — likely an error page",
+            bytes.len()
+        ));
+    }
+
+    let temp_path = bin_dir.join(".gallery-dl_download.tmp");
     let data = bytes.to_vec();
-    let target_clone = target.clone();
+    let temp_clone = temp_path.clone();
     tokio::task::spawn_blocking(move || -> anyhow::Result<()> {
-        std::fs::write(&target_clone, &data)?;
+        std::fs::write(&temp_clone, &data)?;
         #[cfg(unix)]
         {
             use std::os::unix::fs::PermissionsExt;
-            let mut perm = std::fs::metadata(&target_clone)?.permissions();
+            let mut perm = std::fs::metadata(&temp_clone)?.permissions();
             perm.set_mode(0o755);
-            std::fs::set_permissions(&target_clone, perm)?;
+            std::fs::set_permissions(&temp_clone, perm)?;
         }
         Ok(())
     })
     .await
-    .map_err(|e| anyhow!("Spawn blocking failed: {}", e))??;
+    .map_err(|e| anyhow!("spawn_blocking failed: {}", e))??;
 
-    if !target.exists() {
-        return Err(anyhow!("gallery-dl binary not found after download"));
+    replace_managed_binary(&temp_path, &target)?;
+
+    #[cfg(target_os = "macos")]
+    {
+        let mac_target = target.clone();
+        let _ = tokio::task::spawn_blocking(move || {
+            let _ = crate::core::process::std_command("xattr")
+                .args(["-d", "com.apple.quarantine"])
+                .arg(&mac_target)
+                .output();
+            let _ = crate::core::process::std_command("codesign")
+                .args(["-s", "-", "-f"])
+                .arg(&mac_target)
+                .output();
+        })
+        .await;
     }
 
+    let verify = {
+        let verify_target = target.clone();
+        tokio::task::spawn_blocking(move || {
+            crate::core::process::std_command(&verify_target)
+                .arg("--version")
+                .stdout(Stdio::null())
+                .stderr(Stdio::null())
+                .status()
+        })
+        .await
+        .map_err(|e| anyhow!("spawn_blocking failed: {}", e))?
+    };
+    match verify {
+        Ok(s) if s.success() => {}
+        Ok(s) => {
+            return Err(anyhow!(
+                "gallery-dl installed but failed to execute (exit code {})",
+                s
+            ))
+        }
+        Err(e) => return Err(anyhow!("gallery-dl installed but failed to execute: {}", e)),
+    }
+
+    tracing::info!("gallery-dl installed to {}", target.display());
     Ok(target)
 }
 

@@ -13,7 +13,7 @@ resolver = "2"
 
 [package]
 name = "libreget"
-version = "0.16.10"
+version = "1.0.0"
 description = "LibreGet — Universal Downloader & Media Player"
 authors = ["OpenSelena"]
 edition = "2021"
@@ -50,7 +50,7 @@ tracing = "0.1"
 tracing-subscriber = "0.3"
 uuid = { version = "1", features = ["v4"] }
 axum = { version = "0.8", default-features = false, features = ["http1", "json", "tokio"] }
-tower-http = { version = "0.6", features = ["cors"] }
+tower-http = { version = "0.7", features = ["cors"] }
 constant_time_eq = "0.6"
 socket2 = "0.6"
 chrono = { version = "0.4", features = ["serde"] }
@@ -112,7 +112,7 @@ webkit2gtk = { version = "=2.0.2", features = ["v2_38"] }
 
 [target.'cfg(any(target_os = "macos", windows, target_os = "linux"))'.dependencies]
 tauri-plugin-process = "2.4"
-tauri-plugin-updater = "2.10.0"
+tauri-plugin-updater = "2.14.1"
 tauri-plugin-global-shortcut = "2"
 tauri-plugin-clipboard-manager = "2.5"
 tauri-plugin-single-instance = "2"

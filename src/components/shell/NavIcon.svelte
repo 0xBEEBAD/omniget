@@ -1,50 +1,57 @@
 <script lang="ts">
   /**
-   * Sidebar icon tile supporting both custom MosCat character illustrations
-   * and classic macOS System Settings-style gradient tiles for dynamic plugins.
+   * LibreGet navigation icon with high-resolution multi-density penguin artwork.
    */
   let {
     icon,
     iconSvg,
-    size = 22,
+    size = 26,
     active = false,
   }: { icon: string; iconSvg?: string; size?: number; active?: boolean } = $props();
 
-  const MOSCAT_ICONS: Record<string, string> = {
-    home: "/icons/nav/home.svg",
-    downloads: "/icons/nav/downloads.svg",
-    tools: "/icons/nav/tools.svg",
-    nami: "/icons/nav/nami.svg",
-    marketplace: "/icons/nav/marketplace.svg",
-    convert: "/icons/nav/convert.svg",
-    settings: "/icons/nav/settings.svg",
-    about: "/icons/about-64.png",
-    courses: "/icons/nav/courses.svg",
-    telegram: "/icons/telegram-64.png",
+  const PENGUIN_ICONS: Record<string, string> = {
+    home: "home",
+    downloads: "downloads",
+    tools: "tools",
+    nami: "nami",
+    marketplace: "marketplace",
+    settings: "settings",
+    about: "about",
+    convert: "convert",
+    courses: "courses",
+    telegram: "telegram",
   };
 
   const TILES: Record<string, { glyph: string; from: string; to: string }> = {
-    home: { glyph: "house", from: "#5AA9FF", to: "#1E6FE8" },
-    downloads: { glyph: "tray-arrow-down", from: "#FFB340", to: "#F28500" },
     chat: { glyph: "chats-circle", from: "#4CD964", to: "#2AA845" },
-    marketplace: { glyph: "storefront", from: "#6E8CFF", to: "#3D5BF0" },
-    settings: { glyph: "gear-six", from: "#A3A3A8", to: "#6F6F75" },
-    about: { glyph: "info", from: "#5AA9FF", to: "#1E6FE8" },
-    courses: { glyph: "graduation-cap", from: "#C77DFF", to: "#8E3FD8" },
-    telegram: { glyph: "paper-plane-tilt", from: "#55C2FF", to: "#1F8FE0" },
-    convert: { glyph: "arrows-clockwise", from: "#FF7A7A", to: "#E33A3A" },
     misc: { glyph: "wrench", from: "#9B9BA3", to: "#63636B" },
-    tools: { glyph: "toolbox", from: "#FF9F5A", to: "#E8641A" },
-    nami: { glyph: "cloud-arrow-down", from: "#FF6584", to: "#D23B68" },
     plugin: { glyph: "puzzle-piece", from: "#8E8E93", to: "#5C5C60" },
   };
 
-  let moscatIcon = $derived(MOSCAT_ICONS[icon]);
+  let penguin = $derived(PENGUIN_ICONS[icon]);
   let tile = $derived(TILES[icon] ?? TILES.plugin);
   let glyphSize = $derived(Math.round(size * 0.64));
 </script>
 
-{#if iconSvg}
+{#if penguin}
+  <span
+    class="nav-icon nav-penguin"
+    class:nav-icon-active={active}
+    style:--icon-size="{size}px"
+    aria-hidden="true"
+  >
+    <img
+      src="/icons/nav/{penguin}-32.png"
+      srcset="/icons/nav/{penguin}-32.png 1x, /icons/nav/{penguin}-64.png 2x"
+      alt=""
+      width={size}
+      height={size}
+      class="nav-penguin-img"
+      draggable="false"
+      decoding="async"
+    />
+  </span>
+{:else if iconSvg}
   <span
     class="nav-icon nav-tile"
     class:nav-icon-active={active}
@@ -58,22 +65,6 @@
         <path d={pathD} />
       {/each}
     </svg>
-  </span>
-{:else if moscatIcon}
-  <span
-    class="nav-icon nav-moscat"
-    class:nav-icon-active={active}
-    style:--icon-size="{size}px"
-    aria-hidden="true"
-  >
-    <img
-      src={moscatIcon}
-      alt=""
-      width={size}
-      height={size}
-      class="nav-moscat-img"
-      draggable="false"
-    />
   </span>
 {:else}
   <span
@@ -89,6 +80,33 @@
 {/if}
 
 <style>
+  .nav-penguin {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: var(--icon-size);
+    height: var(--icon-size);
+    flex-shrink: 0;
+  }
+
+  .nav-penguin-img {
+    width: var(--icon-size);
+    height: var(--icon-size);
+    object-fit: contain;
+    display: block;
+    image-rendering: -webkit-optimize-contrast;
+    image-rendering: crisp-edges;
+    transition: transform 0.15s var(--ease-out, ease-out);
+  }
+
+  .nav-icon-active .nav-penguin-img {
+    transform: scale(1.08);
+  }
+
+  :global(.mac-nav-item:hover) .nav-penguin-img:not(.nav-icon-active) {
+    transform: scale(1.08);
+  }
+
   .nav-tile {
     display: inline-flex;
     align-items: center;
@@ -103,6 +121,7 @@
       inset 0 -1px 1px rgba(0, 0, 0, 0.12),
       0 0.5px 1px rgba(0, 0, 0, 0.25);
     color: #fff;
+    transition: transform 0.15s var(--ease-out, ease-out);
   }
 
   .nav-glyph {
@@ -113,26 +132,22 @@
     filter: drop-shadow(0 0.5px 0 rgba(0, 0, 0, 0.18));
   }
 
-  .nav-moscat {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: var(--icon-size);
-    height: var(--icon-size);
-    flex-shrink: 0;
+  .nav-icon-active.nav-tile {
+    transform: scale(1.05);
   }
 
-  .nav-moscat-img {
-    width: var(--icon-size);
-    height: var(--icon-size);
-    object-fit: contain;
-    display: block;
-    border-radius: 4px;
-    filter: drop-shadow(0 0.5px 1px rgba(0, 0, 0, 0.18));
-    transition: transform 0.15s ease-out;
+  :global(.mac-nav-item:hover) .nav-tile:not(.nav-icon-active) {
+    transform: scale(1.05);
   }
 
-  .nav-icon-active .nav-moscat-img {
-    transform: scale(1.08);
+  @media (prefers-reduced-motion: reduce) {
+    .nav-penguin-img,
+    .nav-tile {
+      transition: none;
+    }
+    :global(.mac-nav-item:hover) .nav-penguin-img:not(.nav-icon-active),
+    :global(.mac-nav-item:hover) .nav-tile:not(.nav-icon-active) {
+      transform: none;
+    }
   }
 </style>

@@ -13,6 +13,8 @@
     formatEta,
     getFinishedCount,
     getSpeedHistory,
+    removeDownload,
+    markGenericComplete,
     type CourseDownloadItem,
     type GenericDownloadItem,
     type QueueKind,
@@ -28,6 +30,7 @@
   import DownloadPoster from "$components/download/DownloadPoster.svelte";
   import DownloadPhases from "$components/download/DownloadPhases.svelte";
   import DownloadCommand from "$components/download/DownloadCommand.svelte";
+  import FailedLeftoversDialog, { type LeftoverFile } from "$components/downloads/FailedLeftoversDialog.svelte";
   import ReencodeDialog from "$components/dialog/ReencodeDialog.svelte";
   import ToolsPanel from "$components/downloads/ToolsPanel.svelte";
   import VideoOpsOverlay from "$components/downloads/VideoOpsOverlay.svelte";
@@ -35,6 +38,7 @@
   import { locale as i18nLocale } from "$lib/i18n";
   import { get } from "svelte/store";
   import timeAgo from "$lib/time-ago";
+  import { stopDownload as stopNamiDownload } from "$lib/stores/nami_download_store.svelte";
 
 
 
@@ -223,11 +227,16 @@
   }
 
   async function cancelGenericDownload(id: number) {
+    markGenericComplete(id, false, "Download cancelled");
     try {
       await invoke("cancel_generic_download", { downloadId: id });
-    } catch (e: any) {
-      const msg = typeof e === "string" ? e : e.message ?? $t("common.error");
-      showToast("error", msg);
+    } catch {
+      // Marked locally
+    }
+    try {
+      await stopNamiDownload(String(id));
+    } catch {
+      // Ignore if not a nami task
     }
   }
 
@@ -260,16 +269,42 @@
 
   let pendingRemove = $state<number | null>(null);
   let pendingRemoveTimer = $state<ReturnType<typeof setTimeout> | null>(null);
+  let leftoversOpen = $state(false);
+  let leftoverFiles = $state<LeftoverFile[]>([]);
+  let leftoversId = $state<number | null>(null);
+
+  async function removeOfferingLeftovers(id: number) {
+    let files: LeftoverFile[] = [];
+    try {
+      files = await invoke<LeftoverFile[]>("failed_download_leftovers", { downloadId: id });
+    } catch {
+      files = [];
+    }
+    if (files.length > 0) {
+      leftoverFiles = files;
+      leftoversId = id;
+      leftoversOpen = true;
+      return;
+    }
+    await finishRemove(id, false);
+  }
+
+  async function finishRemove(id: number, deletePartials: boolean) {
+    try {
+      await invoke("remove_download", { downloadId: id, deletePartials });
+    } catch {
+      // Generic / client-side item not tracked in backend download_queue
+    } finally {
+      removeDownload(id);
+    }
+  }
 
   function removeItem(id: number) {
     if (pendingRemove === id) {
       if (pendingRemoveTimer) clearTimeout(pendingRemoveTimer);
       pendingRemove = null;
       pendingRemoveTimer = null;
-      invoke("remove_download", { downloadId: id }).catch((e: any) => {
-        const msg = typeof e === "string" ? e : e.message ?? $t("common.error");
-        showToast("error", msg);
-      });
+      void removeOfferingLeftovers(id);
     } else {
       if (pendingRemoveTimer) clearTimeout(pendingRemoveTimer);
       pendingRemove = id;
@@ -297,6 +332,11 @@
     } catch (e: any) {
       const msg = typeof e === "string" ? e : e.message ?? $t("common.error");
       showToast("error", msg);
+    }
+    for (const [id, item] of getDownloads()) {
+      if (item.status === "complete" || item.status === "error") {
+        removeDownload(id);
+      }
     }
   }
 
@@ -782,6 +822,14 @@
 
 <ReencodeDialog bind:inputPath={reencodePath} />
 
+<FailedLeftoversDialog
+  bind:open={leftoversOpen}
+  files={leftoverFiles}
+  onRemove={(deletePartials) => {
+    if (leftoversId !== null) void finishRemove(leftoversId, deletePartials);
+  }}
+/>
+
 {#if vopPath}
   <VideoOpsOverlay filePath={vopPath} onClose={() => (vopPath = null)} />
 {/if}
@@ -803,20 +851,24 @@
           </div>
           <div class="item-header-actions">
             {#if item.status === "downloading"}
-              <button
-                class="action-icon-btn"
-                onclick={() => pauseDownload(item.id)}
-                aria-label={$t('downloads.pause')}
-              >
-                <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                  <rect x="6" y="4" width="4" height="16" />
-                  <rect x="14" y="4" width="4" height="16" />
-                </svg>
-              </button>
+              {#if item.canPause !== false && item.queueKind !== "image"}
+                <button
+                  class="action-icon-btn"
+                  onclick={() => pauseDownload(item.id)}
+                  aria-label={$t('downloads.pause')}
+                  title={$t('downloads.pause')}
+                >
+                  <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="6" y="4" width="4" height="16" />
+                    <rect x="14" y="4" width="4" height="16" />
+                  </svg>
+                </button>
+              {/if}
               <button
                 class="action-icon-btn"
                 onclick={() => cancelGenericDownload(item.id)}
                 aria-label={$t('downloads.cancel')}
+                title={$t('downloads.cancel')}
               >
                 <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                   <path d="M18 6L6 18M6 6l12 12" />
@@ -1024,9 +1076,14 @@
           {:else if qualityChip(item)}
             <span class="quality-chip" title={$t('downloads.quality_hint')}>{qualityChip(item)}</span>
           {/if}
-          {#if item.status === "complete" && (item.totalBytes || item.downloadedBytes)}
-            <span class="meta-sep" aria-hidden="true">·</span>
-            <span class="meta-text">{formatBytes(item.totalBytes ?? item.downloadedBytes)}</span>
+          {#if item.status === "complete"}
+            {#if item.totalBytes || item.downloadedBytes}
+              <span class="meta-sep" aria-hidden="true">·</span>
+              <span class="meta-text">{formatBytes(item.totalBytes ?? item.downloadedBytes)}</span>
+            {:else if (item.fileCount ?? 0) > 0}
+              <span class="meta-sep" aria-hidden="true">·</span>
+              <span class="meta-text">{item.fileCount} {item.fileCount === 1 ? 'file' : 'files'}</span>
+            {/if}
           {:else if item.status === "downloading" && !item.totalBytes && plannedSize(item)}
             <span class="meta-sep" aria-hidden="true">·</span>
             <span class="meta-text">≈ {formatBytes(plannedSize(item)!)}</span>
@@ -1046,7 +1103,10 @@
           />
           {#if isTransferPhase(item.phase)}
             <div class="item-stats">
-              {#if item.downloadedBytes > 0}
+              {#if (item.fileCount ?? 0) > 0}
+                <span>{item.fileCount} {item.fileCount === 1 ? 'file' : 'files'}</span>
+                <span class="stats-sep">&middot;</span>
+              {:else if item.downloadedBytes > 0}
                 <span>{formatBytes(item.downloadedBytes)}{#if item.totalBytes}{" / "}{formatBytes(item.totalBytes)}{/if}</span>
                 <span class="stats-sep">&middot;</span>
               {/if}
@@ -1095,11 +1155,15 @@
               <div
                 class="progress-fill"
                 data-status={item.status}
-                class:indeterminate={item.status === "downloading" && item.percent <= 0 && !isTransferPhase(item.phase)}
+                class:indeterminate={item.status === "downloading" && item.percent <= 0 && (!isTransferPhase(item.phase) || item.queueKind === "image")}
                 style:width="{Math.max(0, item.percent).toFixed(1)}%"
               ></div>
             </div>
-            <span class="item-percent">{Math.max(0, item.percent).toFixed(0)}%</span>
+            {#if item.status === "downloading" && item.percent <= 0 && (!isTransferPhase(item.phase) || item.queueKind === "image")}
+              <span class="item-percent indeterminate-glyph" title="Progress indeterminate">&hellip;</span>
+            {:else}
+              <span class="item-percent">{Math.max(0, item.percent).toFixed(0)}%</span>
+            {/if}
           </div>
         {/if}
 

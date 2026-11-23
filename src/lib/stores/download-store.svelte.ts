@@ -71,6 +71,7 @@ export type GenericDownloadItem = BaseItem & {
   etaSeconds?: number | null;
   filePath?: string;
   fileCount?: number;
+  canPause?: boolean;
   thumbnail_url?: string | null;
   quality?: string | null;
   downloadMode?: string | null;
@@ -90,6 +91,7 @@ export type GenericProgressExtra = {
   fragmentIndex?: number | null;
   fragmentCount?: number | null;
   plannedFormats?: string[] | null;
+  fileCount?: number | null;
 };
 
 export type DownloadItem = CourseDownloadItem | GenericDownloadItem;
@@ -425,6 +427,37 @@ export function markGenericComplete(id: number, success: boolean, error?: string
   flushNow();
 }
 
+export function registerGenericDownload(
+  id: number,
+  title: string,
+  platform: string,
+  thumbnail_url?: string | null,
+  author?: string | null,
+  queueKind?: QueueKind,
+  canPause?: boolean,
+) {
+  const now = Date.now();
+  downloads.set(id, {
+    kind: "generic",
+    id,
+    name: title,
+    platform,
+    percent: 0,
+    speed: 0,
+    downloadedBytes: 0,
+    totalBytes: null,
+    phase: "archiving",
+    status: "downloading",
+    startedAt: now,
+    lastUpdateAt: now,
+    thumbnail_url: thumbnail_url ?? null,
+    author: author ?? null,
+    queueKind: queueKind ?? "image",
+    canPause: canPause ?? (queueKind !== "image" && queueKind !== "generic"),
+  });
+  flushNow();
+}
+
 export function upsertGenericProgress(
   id: number,
   title: string,
@@ -486,6 +519,7 @@ export function upsertGenericProgress(
     fragmentIndex: extra?.fragmentIndex ?? prev?.fragmentIndex ?? null,
     fragmentCount: extra?.fragmentCount ?? prev?.fragmentCount ?? null,
     plannedFormats: extra?.plannedFormats ?? prev?.plannedFormats ?? null,
+    fileCount: extra?.fileCount !== undefined ? (extra.fileCount ?? undefined) : prev?.fileCount,
   });
 
   if (resolvedStatus === "downloading") {

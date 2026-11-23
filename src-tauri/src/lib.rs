@@ -250,6 +250,7 @@ pub fn run() {
         torrent_session.clone(),
     )));
     registry.register(Arc::new(libreget_core::platforms::P2pDownloader::new()));
+    registry.register(Arc::new(libreget_core::platforms::GdocsDownloader::new()));
     registry.register(Arc::new(
         libreget_core::platforms::DirectFileDownloader::new(),
     ));
@@ -963,6 +964,7 @@ pub fn run() {
             commands::downloads::reorder_queue,
             commands::downloads::retry_download,
             commands::downloads::remove_download,
+            commands::downloads::failed_download_leftovers,
             commands::downloads::update_max_concurrent,
             commands::downloads::clear_finished_downloads,
             commands::downloads::get_download_log,
@@ -1012,6 +1014,8 @@ pub fn run() {
             commands::tools::documents::tool_slideshare,
             commands::tools::documents::tool_gdocs_parse,
             commands::tools::documents::tool_gdocs_download,
+            commands::tools::documents::tool_gslides_compile_dir,
+            commands::tools::documents::tool_gslides_bridge_info,
             commands::tools::documents::tool_calameo,
             commands::tools::documents::tool_gallery_status,
             commands::tools::documents::tool_gallery_install,
@@ -1294,6 +1298,8 @@ pub fn run() {
             commands::tools::linkedin::tool_li_checklist,
             commands::nami::nami_check_python_dependencies,
             commands::nami::http::nami_http_fetch,
+            commands::nami::http::nami_cache_avatar,
+            commands::nami::http::nami_resolve_facebook_avatar,
             commands::nami::nami_run_gallery_dl_download,
             commands::nami::nami_cancel_download,
             commands::nami::nami_save_app_settings,

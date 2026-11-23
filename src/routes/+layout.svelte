@@ -61,15 +61,6 @@
   let badgeLabel = $derived(counts.badge > 99 ? "99+" : String(counts.badge));
   let settings = $derived(getSettings());
 
-  let isCoreRoute = $derived(
-    page.url.pathname === "/" ||
-    page.url.pathname.startsWith("/downloads") ||
-    page.url.pathname.startsWith("/settings") ||
-    page.url.pathname.startsWith("/marketplace") ||
-    page.url.pathname.startsWith("/about") ||
-    page.url.pathname.startsWith("/nami"),
-  );
-
   let isFlushRoute = $derived(
     page.url.pathname === "/" ||
     page.url.pathname.startsWith("/downloads") ||
@@ -348,13 +339,49 @@
     } catch {}
   }
 
+  const SIDEBAR_KEY = "libreget.sidebar.collapsed";
+  let sidebarCollapsed = $state(
+    typeof localStorage === "undefined"
+      ? false
+      : localStorage.getItem(SIDEBAR_KEY) === "1",
+  );
+
+  $effect(() => {
+    document.documentElement.setAttribute("data-sidebar", sidebarCollapsed ? "collapsed" : "expanded");
+  });
+
+  function toggleSidebar() {
+    sidebarCollapsed = !sidebarCollapsed;
+    try {
+      localStorage.setItem(SIDEBAR_KEY, sidebarCollapsed ? "1" : "0");
+    } catch {}
+  }
+
+  function onSidebarShortcut(e: KeyboardEvent) {
+    if (e.key.toLowerCase() !== "s" || e.altKey) return;
+    if ((e.ctrlKey || e.metaKey) && e.shiftKey) {
+      e.preventDefault();
+      toggleSidebar();
+    }
+  }
+
   onMount(() => {
     void checkAutoVacuum();
   });
 </script>
 
+<svelte:window onkeydown={onSidebarShortcut} />
+
 <div class="shell" data-reduce-motion={settings?.accessibility?.reduce_motion} data-reduce-transparency={settings?.accessibility?.reduce_transparency}>
-  <AppSidebar {primaryNav} {appNav} {pluginNav} {badgeLabel} />
+  <AppSidebar
+    {primaryNav}
+    {appNav}
+    {pluginNav}
+    {badgeLabel}
+    badgeCount={counts.badge}
+    collapsed={sidebarCollapsed}
+    onToggleCollapsed={toggleSidebar}
+  />
 
   <div class="shell-body">
     <AppToolbar />
@@ -416,15 +443,9 @@
 
     <main id="main-content" class="content">
       <div class="mac-pane" class:mac-pane--flush={isFlushRoute}>
-        {#if isCoreRoute}
-          <div class="core-shell" class:core-shell--flush={isFlushRoute}>
-            {@render children()}
-          </div>
-        {:else}
-          <div class="mac-pane-scroll">
-            {@render children()}
-          </div>
-        {/if}
+        <div class="mac-pane-scroll core-shell" class:core-shell--flush={isFlushRoute}>
+          {@render children()}
+        </div>
       </div>
       <GlobalDownloadBar />
     </main>
@@ -500,6 +521,9 @@
     width: 100%;
     margin: 0;
     overflow-y: auto;
+    overscroll-behavior-y: contain;
+    transform: translateZ(0);
+    will-change: scroll-position;
   }
 
   .core-shell--flush {

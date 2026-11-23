@@ -121,6 +121,21 @@ fn normalize_profile_url(platform: &str, raw_input: &str) -> String {
         return format!("https://www.tiktok.com/@{}", user.to_lowercase());
     }
 
+    if platform == "facebook" && path.eq_ignore_ascii_case("profile.php") {
+        if let Some((_, query_and_frag)) = without_scheme.split_once('?') {
+            let (query, _) = query_and_frag
+                .split_once('#')
+                .unwrap_or((query_and_frag, ""));
+            for pair in query.split('&') {
+                if let Some((k, v)) = pair.split_once('=') {
+                    if k.eq_ignore_ascii_case("id") && !v.is_empty() {
+                        return format!("https://www.facebook.com/profile.php?id={}", v);
+                    }
+                }
+            }
+        }
+    }
+
     if platform == "x" {
         if path.starts_with("i/history/likes") {
             return "https://x.com/i/history/likes".to_string();
@@ -216,14 +231,28 @@ pub fn nami_save_app_settings(
     Ok("Settings saved successfully".to_string())
 }
 
+fn default_nami_output_dir() -> Option<String> {
+    dirs::download_dir()
+        .map(|d| d.join("Nami").to_string_lossy().to_string())
+        .or_else(|| {
+            dirs::home_dir().map(|h| {
+                h.join("Downloads")
+                    .join("Nami")
+                    .to_string_lossy()
+                    .to_string()
+            })
+        })
+}
+
 #[command]
 pub fn nami_load_app_settings() -> Result<AppSettings, String> {
     let _storage_guard = NAMI_STORAGE_LOCK.lock().unwrap_or_else(|p| p.into_inner());
 
+    let default_out = default_nami_output_dir();
     let settings_file = libreget_nami_dir()?.join("app_settings.json");
     if !settings_file.exists() {
         return Ok(AppSettings {
-            output_directory: None,
+            output_directory: default_out,
             cookies_file: None,
             browser_cookies: None,
         });
@@ -231,8 +260,15 @@ pub fn nami_load_app_settings() -> Result<AppSettings, String> {
 
     let content = fs::read_to_string(&settings_file)
         .map_err(|e| format!("Failed to read settings: {}", e))?;
-    let settings: AppSettings =
+    let mut settings: AppSettings =
         serde_json::from_str(&content).map_err(|e| format!("Failed to parse settings: {}", e))?;
+    if settings
+        .output_directory
+        .as_ref()
+        .map_or(true, |d| d.trim().is_empty())
+    {
+        settings.output_directory = default_out;
+    }
     Ok(settings)
 }
 
@@ -573,6 +609,17 @@ mod tests {
         assert_eq!(
             normalize_profile_url("x", "OpenSelena"),
             "https://x.com/openselena"
+        );
+        assert_eq!(
+            normalize_profile_url(
+                "facebook",
+                "https://www.facebook.com/profile.php?id=1000123456789&mibextid=kFxxjd"
+            ),
+            "https://www.facebook.com/profile.php?id=1000123456789"
+        );
+        assert_eq!(
+            normalize_profile_url("facebook", "zuck"),
+            "https://www.facebook.com/zuck"
         );
     }
 }

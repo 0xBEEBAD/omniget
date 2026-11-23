@@ -67,8 +67,8 @@ pub fn build_gallery_dl_args(options: &GalleryDlArgsOptions) -> Vec<String> {
         "3".to_string(),
         "--sleep-429".to_string(),
         "10".to_string(),
-        "--Print".to_string(),
-        "after:FILE_OK:{filename}.{extension}".to_string(),
+        "--exec".to_string(),
+        "echo FILE_OK:{_path}".to_string(),
     ];
 
     if let Some(threshold) = options.abort_after_duplicates {
@@ -247,11 +247,6 @@ pub fn build_yt_dlp_args(options: &YtDlpArgsOptions) -> Vec<String> {
             args.push("--cookies-from-browser".to_string());
             args.push(browser_cookie.to_string());
         }
-    }
-
-    if options.platform.eq_ignore_ascii_case("x") && options.skip_replies == Some(true) {
-        args.push("--filter".to_string());
-        args.push("not reply or in_reply_to_user_id == user_id".to_string());
     }
 
     // Guard against CLI argument injection

@@ -54,10 +54,6 @@ twitch-downloader, subtitle-downloader, epub-reader, spaced-repetition
   <a href="#the-tools-section-158-tools-in-25-categories"><img src="https://img.shields.io/badge/See_the_158_tools-→-3D5BF0?style=for-the-badge" alt="See the Tools section" height="40" /></a>
 </p>
 
-<p align="center">
-  <img src="assets/readme/home.png" alt="LibreGet home screen: paste a URL, magnet link or .torrent and the file lands in your folder" width="900" />
-</p>
-
 ---
 
 ## Contents
@@ -86,6 +82,10 @@ twitch-downloader, subtitle-downloader, epub-reader, spaced-repetition
 You bought a course and want it on your disk before the platform pulls it. You keep a yt-dlp cheat sheet because the flags never stick. You have one site for Instagram stories, another for X videos, a Chrome extension for Pinterest, a Python script for subtitles, and none of them remember your login.
 
 LibreGet puts all of that behind one text box. Paste a link, see a preview with quality options, click download. The same window then plays the course, reads the PDF, transcribes the audio and backs up the Pinterest board. yt-dlp and FFmpeg install themselves and stay updated, so there is nothing to configure and no terminal to open.
+
+<p align="center">
+  <img src="assets/readme/home.png" alt="LibreGet home screen: paste a URL, magnet link or .torrent and the file lands in your folder" width="900" />
+</p>
 
 <p align="center">
   <img src="assets/readme/workflow.png" alt="How LibreGet works in three steps: paste a link, LibreGet detects the site and picks a native extractor or yt-dlp, the file lands in your folder and opens in the built-in player." width="100%" />

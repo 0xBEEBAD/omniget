@@ -80,6 +80,7 @@ twitch-downloader, subtitle-downloader, epub-reader, spaced-repetition
 - [Частые вопросы](#частые-вопросы)
 - [Командная строка](#командная-строка)
 - [Сборка из исходников](#сборка-из-исходников)
+- [Политика подписи кода](#политика-подписи-кода)
 - [Участие и переводы](#участие-и-переводы)
 
 ---
@@ -695,6 +696,16 @@ pnpm tauri build --config '{"bundle":{"createUpdaterArtifacts":false}}'
 Плагины `courses`, `telegram` и `convert` лежат внутри `src-tauri/plugins/` и собираются в основной бинарник. Реестр плагинов: [libreget-plugins](https://github.com/OpenSelena/libreget-plugins).
 
 Стек: Tauri 2, Rust, SvelteKit на Svelte 5, SQLite, yt-dlp, FFmpeg, librqbit для торрентов, whisper.cpp, aria2, gallery-dl.
+
+---
+
+## Политика подписи кода
+
+Бесплатная подпись кода для Windows предоставлена [SignPath.io](https://about.signpath.io), сертификат выдан [SignPath Foundation](https://signpath.org).
+
+- **Коммиттеры и рецензенты**: [Владельцы OpenSelena](https://github.com/orgs/OpenSelena/people?query=role%3Aowner) (`igect`, `ebnycuhie`)
+- **Утверждающие релизы**: [Владельцы OpenSelena](https://github.com/orgs/OpenSelena/people?query=role%3Aowner) (`igect`, `ebnycuhie`)
+- **Политика конфиденциальности**: Подробнее о том, как LibreGet обращается с данными, см. в разделе [Приватность и то, чего LibreGet не делает](#приватность-и-то-чего-libreget-не-делает).
 
 ---
 

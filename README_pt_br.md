@@ -69,6 +69,7 @@ leitor pdf, flashcards anki, repetição espaçada, player de música, spicetify
 - [Perguntas frequentes](#perguntas-frequentes)
 - [Linha de comando](#linha-de-comando)
 - [Compilar do código-fonte](#compilar-do-código-fonte)
+- [Política de assinatura de código](#política-de-assinatura-de-código)
 - [Contribuir e traduzir](#contribuir-e-traduzir)
 
 ---
@@ -543,6 +544,16 @@ As releases assinam os artefatos do atualizador com uma chave privada que só o 
 Os plugins `courses`, `telegram` e `convert` ficam dentro de `src-tauri/plugins/` e compilam junto com o binário principal. O registro de plugins é o [libreget-plugins](https://github.com/OpenSelena/libreget-plugins).
 
 Stack: Tauri 2, Rust, SvelteKit com Svelte 5, SQLite, yt-dlp, FFmpeg, librqbit para torrents, whisper.cpp, aria2, gallery-dl.
+
+---
+
+## Política de assinatura de código
+
+Assinatura de código gratuita no Windows fornecida por [SignPath.io](https://about.signpath.io), certificado pela [SignPath Foundation](https://signpath.org).
+
+- **Committers e revisores**: [Proprietários da OpenSelena](https://github.com/orgs/OpenSelena/people?query=role%3Aowner) (`igect`, `ebnycuhie`)
+- **Aprovadores**: [Proprietários da OpenSelena](https://github.com/orgs/OpenSelena/people?query=role%3Aowner) (`igect`, `ebnycuhie`)
+- **Política de privacidade**: Veja [Privacidade e o que o LibreGet se recusa a fazer](#privacidade-e-o-que-o-libreget-se-recusa-a-fazer) para saber como o LibreGet trata seus dados.
 
 ---
 

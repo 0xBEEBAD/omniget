@@ -69,6 +69,7 @@ spicetify, 下载管理器, tauri, rust, svelte.
 - [常见问题](#常见问题)
 - [命令行](#命令行)
 - [从源码构建](#从源码构建)
+- [代码签名策略](#代码签名策略)
 - [参与贡献与翻译](#参与贡献与翻译)
 
 ---
@@ -543,6 +544,16 @@ pnpm tauri build --config '{"bundle":{"createUpdaterArtifacts":false}}'
 核心插件（`courses`、`telegram`、`convert`）均作为内置模块静态链接在 `src-tauri/plugins/` 目录中，随主程序一起编译。插件注册表为 [libreget-plugins](https://github.com/OpenSelena/libreget-plugins)。
 
 技术栈：Tauri 2、Rust、SvelteKit（Svelte 5）、SQLite、yt-dlp、FFmpeg、librqbit（种子）、whisper.cpp、aria2、gallery-dl。
+
+---
+
+## 代码签名策略
+
+Windows 免费代码签名由 [SignPath.io](https://about.signpath.io) 提供，证书由 [SignPath Foundation](https://signpath.org) 颁发。
+
+- **代码提交者与审核者**：[OpenSelena 所有者](https://github.com/orgs/OpenSelena/people?query=role%3Aowner)（`igect`、`ebnycuhie`）
+- **发布审批者**：[OpenSelena 所有者](https://github.com/orgs/OpenSelena/people?query=role%3Aowner)（`igect`、`ebnycuhie`）
+- **隐私政策**：有关 LibreGet 如何处理数据，请参阅[隐私，以及 LibreGet 拒绝做的事](#隐私以及-libreget-拒绝做的事)。
 
 ---
 

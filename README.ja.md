@@ -605,7 +605,9 @@ LibreGet がダウンロードするのは、あなた自身のログインセ�
 
 Windows での無料のコード署名は [SignPath.io](https://about.signpath.io) が提供し、証明書は [SignPath Foundation](https://signpath.org) によるものです。
 
-コードの変更と署名付きのリリースは、OpenSelena のメンテナーがレビューし、承認しています。LibreGet がデータをどのように扱うかについては、[プライバシーと LibreGet がしないこと](#プライバシーと-libreget-がしないこと) をご覧ください。
+- **コミッターおよびレビュアー**: [OpenSelena オーナー](https://github.com/orgs/OpenSelena/people?query=role%3Aowner)（`igect`、`ebnycuhie`）
+- **承認者**: [OpenSelena オーナー](https://github.com/orgs/OpenSelena/people?query=role%3Aowner)（`igect`、`ebnycuhie`）
+- **プライバシーポリシー**: LibreGet によるデータの取り扱いについては、[プライバシーと LibreGet がしないこと](#プライバシーと-libreget-がしないこと) をご覧ください。
 
 ---
 

@@ -697,7 +697,9 @@ The `courses`, `telegram` and `convert` plugins live inside `src-tauri/plugins/`
 
 Free code signing on Windows provided by [SignPath.io](https://about.signpath.io), certificate by [SignPath Foundation](https://signpath.org).
 
-Code changes and signed releases are reviewed and approved by the OpenSelena maintainers. See [Privacy and what LibreGet refuses to do](#privacy-and-what-libreget-refuses-to-do) for how LibreGet handles data.
+- **Committers and reviewers**: [OpenSelena Owners](https://github.com/orgs/OpenSelena/people?query=role%3Aowner) (`igect`, `ebnycuhie`)
+- **Approvers**: [OpenSelena Owners](https://github.com/orgs/OpenSelena/people?query=role%3Aowner) (`igect`, `ebnycuhie`)
+- **Privacy policy**: See [Privacy and what LibreGet refuses to do](#privacy-and-what-libreget-refuses-to-do) for how LibreGet handles data.
 
 ---
 
